@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context 
+    	http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- **************************************************************** -->
+	<!-- SPRING ANNOTATION PROCESSING -->
+	<!-- **************************************************************** -->
+	<!-- <mvc:annotation-driven conversion-service="conversionService" /> -->
+	<!-- 只扫描Controller 注解 -->
+	<context:component-scan base-package="com.ucpaas.**.controller"
+		use-default-filters="false">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+		<context:include-filter type="annotation"
+			expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+	</context:component-scan>
+	
+
+
+	<!-- **************************************************************** -->
+	<!-- RESOURCE FOLDERS CONFIGURATION -->
+	<!-- Dispatcher configuration for serving static resources -->
+	<!-- **************************************************************** -->
+	<mvc:resources location="/styles/" mapping="/styles/**" />
+	<bean id="contentNegotiationManager"
+		class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+		<property name="favorPathExtension" value="false" />
+		<property name="favorParameter" value="false" />
+		<property name="ignoreAcceptHeader" value="false" />
+		<property name="mediaTypes">
+			<value>
+				atom = application/atom+xml
+				html = text/html
+				json = application/json
+				* = */*
+			</value>
+		</property>
+	</bean>
+
+	<mvc:annotation-driven  content-negotiation-manager="contentNegotiationManager">
+		<mvc:message-converters register-defaults="true">
+			<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
+			<!-- 将StringHttpMessageConverter的默认编码设为UTF-8 -->
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<constructor-arg value="UTF-8"/>
+			</bean>
+			<!-- 将Jackson2HttpMessageConverter的默认格式化输出为false -->
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>application/json;charset=UTF-8</value>
+						<!--<value>text/html;charset=UTF-8</value>-->
+					</list>
+				</property>
+				<property name="prettyPrint" value="false"/>
+				<!--<property name="objectMapper" ref="objectMapper"/>-->
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	<!--<bean id="objectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean"
+		  p:indentOutput="true"
+		  p:timeZone="GMT+8"
+		  p:simpleDateFormat="yyyy-MM-dd HH:mm:ss"/>-->
+
+	<bean id="templateResolver"
+		  class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+		<property name="prefix" value="/"/>
+		<property name="suffix" value=".html"/>
+		<property name="templateMode" value="LEGACYHTML5"/>
+		<property name="cacheable" value="false"/>
+		<property name="characterEncoding" value="UTF-8"/>
+	</bean>
+
+	<bean id="templateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
+		<property name="templateResolver" ref="templateResolver"/>
+		<property name="additionalDialects">
+			<set>
+				<bean class="org.thymeleaf.extras.conditionalcomments.dialect.ConditionalCommentsDialect"/>
+			</set>
+		</property>
+	</bean>
+
+	<bean class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
+		<property name="templateEngine" ref="templateEngine"/>
+		<property name="characterEncoding" value="UTF-8"/>
+	</bean>
+
+	<!-- 对静态资源文件的访问 -->
+	<mvc:resources location="/styles/" mapping="/styles/**"/>
+
+	<bean id="mappingJacksonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+
+	
+	
+</beans>

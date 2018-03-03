@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context 
+    	http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- 扫描的包路径 去掉webmvc的注解，mvc的bean交给springmvc容器管理，这涉及到容器的层次 -->
+	<context:component-scan base-package="com.ucpaas">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+	<!-- 根据不同的运行环境加载配置文件 -->
+	<context:property-placeholder location="classpath:system.properties" />
+	
+	
+</beans>

@@ -1,0 +1,12 @@
+target/
+logs/
+bin/
+.settings/
+.classpath
+.project
+log/
+rebel.xml
+.externalToolBuilders/
+.idea/
+smsp-img.iml
+file_path_IS_UNDEFINED/
